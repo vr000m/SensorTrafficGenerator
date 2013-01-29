@@ -17,5 +17,9 @@ Example:
 
 It also creates a log file (CSV) with filename `device_id.log`:
 ```
- timestamp  device_id   value or len(value)
+ timestamp  device_id   data
 ```
+Camera is a special case in which the log file just stores
+the length of the data field because the simulated
+data from the camera can be very large. Instead the data
+is stored in a camera.data file
