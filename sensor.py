@@ -124,7 +124,6 @@ def main(argv):
                 #generating random bytes to simulate MPEG2 video payload
                 #in MPEG2 all frames are equal sized
                 val= os.urandom(bitrate/8/fps)
-                timeout=float(1/fps)
                 #period of motion is random
                 motion_time=float(random.uniform(1,5))
                 if(time.time()-vid_stime>motion_time):
