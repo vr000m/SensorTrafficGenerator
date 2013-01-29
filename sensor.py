@@ -18,6 +18,7 @@ def usage():
     valid sensor_type: [temp, device, gps, camera]"
             
 
+def sensor_send(message, ipaddr, port):
     '''
     send data 
     '''
@@ -25,6 +26,7 @@ def usage():
     port=int(args[2])
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_address = (ip, port)
+    server_address = (ipaddr, port)
     
     sentbytes=0
     while sentbytes < len(message):
@@ -35,6 +37,9 @@ def usage():
         print round(time.time(),3), len(message), ip, port
     if (sentbytes<MTU):
         print message, len(message), ip, port
+    # if (sentbytes>MTU):
+    #     print round(time.time(),3), len(message), ip, port
+    # if (sentbytes<MTU):
     
     
 def main(argv):
@@ -42,9 +47,18 @@ def main(argv):
     very simple sensor generator
     '''
     start_time = time.time()
+    sensor_type= argv[0].lower()
+    ip="localhost" 
+    port=5000
+    
     if argv[0] == "-h" or argv[0]=="--help":
         usage()
         sys.exit(0)
+    if(len(argv)==3):
+        ip=argv[1]
+        port=int(argv[2])
+    else:
+        print "using defaults=> localhost and port:",port
     
     #choose deviceid?
     dev_id=argv[0]+"-"+str(random.randint(10000,99999))
@@ -136,4 +150,5 @@ def main(argv):
         
 if __name__ == "__main__":
   main(sys.argv[1:])    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
     main(sys.argv[1:])
