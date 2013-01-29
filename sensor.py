@@ -5,14 +5,16 @@ import time
 import socket
 import os
 import csv
+import glob
 import signal
 
 MTU=1300
+
     
-def sensor_send(message, args):
 def signal_handler(signal, frame):
     print 'shutting down sensor...'
     sys.exit(0)
+
 def usage():
     print "sensor.py <sensor_type> <ip> <port>\n\
     valid sensor_type: [temp, device, gps, camera]"
@@ -22,10 +24,7 @@ def sensor_send(message, ipaddr, port):
     '''
     send data 
     '''
-    ip=args[1]
-    port=int(args[2])
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_address = (ip, port)
     server_address = (ipaddr, port)
     
     sentbytes=0
@@ -33,13 +32,10 @@ def sensor_send(message, ipaddr, port):
         temp = sock.sendto(message[sentbytes:(sentbytes+MTU)], server_address)
         sentbytes += temp
     
-    if (sentbytes>MTU):
-        print round(time.time(),3), len(message), ip, port
-    if (sentbytes<MTU):
-        print message, len(message), ip, port
     # if (sentbytes>MTU):
     #     print round(time.time(),3), len(message), ip, port
     # if (sentbytes<MTU):
+    #     print message, len(message), ip, port
     
     
 def main(argv):
@@ -60,8 +56,9 @@ def main(argv):
     else:
         print "using defaults=> localhost and port:",port
     
+
     #choose deviceid?
-    dev_id=argv[0]+"-"+str(random.randint(10000,99999))
+    dev_id=sensor_type+"-"+str(random.randint(10000,99999))
     
     #randomly choose a mean temperature
     mean_temp=random.uniform(-30, 50)
@@ -80,18 +77,25 @@ def main(argv):
             iRow +=1
     fwdDir = True
 
+    logFname = dev_id+'.log'
+    logFile = open(logFname, 'wb')
+    logWriter = csv.writer(logFile, delimiter='\t')
+
+    camFile = open("camera.data", 'wb')
+
+    
     j=0
-    maxt=mint=1.0
     while (True):
-        if (argv[0]=="temp"):
+        curr_time = round(time.time(),3)
+        if (sensor_type =="temp"):
             val= round(random.normalvariate(mean_temp, 10),1)
             timeout= 1.0
             
-        elif (argv[0]=="device"):
+        elif (sensor_type =="device"):
             val=random.choice(["OFF","ON"])
             timeout= float(random.uniform(0.1,5))
             
-        elif (argv[0]=="gps"):
+        elif (sensor_type =="gps"):
             dist= paths[j][2]
             units= 1#float(1000.0/3600.0)
             speed=random.uniform(30.0*units, 100.0*units)
@@ -113,7 +117,7 @@ def main(argv):
             timeout = t
 
             
-        elif (argv[0]=="camera"):
+        elif (sensor_type =="camera"):
             #did we detect motion?
             if (motion):
                 #yes there was motion
@@ -124,6 +128,7 @@ def main(argv):
                 #generating random bytes to simulate MPEG2 video payload
                 #in MPEG2 all frames are equal sized
                 val= os.urandom(bitrate/8/fps)
+                timeout=float(1.0/fps)
                 #period of motion is random
                 motion_time=float(random.uniform(1,5))
                 if(time.time()-vid_stime>motion_time):
@@ -134,20 +139,31 @@ def main(argv):
                 motion=random.choice([0,1])
                 timeout=float(random.uniform(1,10))
                 vid_stime=time.time()+timeout
+
         else:
-            print argv[0],"not defined"
+            print "argument:",argv[0],"not defined"
+            files=glob.glob(logFname)
+            for f in files:
+                os.unlink(f)
             usage()
             break
             
         #pack the data into a dictionary    
         message={}
-        message["ts"]=round(time.time(),3)
+        message["ts"]=curr_time
         message["dev_id"]=(dev_id)
         message["data"]=(val)
-        sensor_send(str(message), argv)
+        sensor_send(str(message), ip, port)
+        #print timeout
+        
+        if(sensor_type!="camera"):
+            logWriter.writerow([curr_time, val])
+        else:
+            logWriter.writerow([curr_time, len(str(val))])
+            if (val!=0 and len(str(val))>1):
+                camFile.write(str(val))
         time.sleep(timeout)
         
 if __name__ == "__main__":
-  main(sys.argv[1:])    signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGINT, signal_handler)
     main(sys.argv[1:])
