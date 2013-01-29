@@ -9,10 +9,13 @@ import glob
 import signal
 
 MTU=1300
+#Camera_data_size = 0
 
     
 def signal_handler(signal, frame):
     print 'shutting down sensor...'
+    # if Camera_data_size > 0:
+    #     print Camera_data_size
     sys.exit(0)
 
 def usage():
@@ -80,9 +83,6 @@ def main(argv):
     logFname = dev_id+'.log'
     logFile = open(logFname, 'wb')
     logWriter = csv.writer(logFile, delimiter='\t')
-
-    camFile = open("camera.data", 'wb')
-
     
     j=0
     while (True):
@@ -157,10 +157,15 @@ def main(argv):
         #print timeout
         
         if(sensor_type!="camera"):
+            #could have stored the dictionary (pickle it)
             logWriter.writerow([curr_time, val])
         else:
-            logWriter.writerow([curr_time, len(str(val))])
-            if (val!=0 and len(str(val))>1):
+            val_len = len(str(val))
+            logWriter.writerow([curr_time, val_len])
+            if (val!=0 and val_len>1):
+                #global Camera_data_size
+                Camera_data_size += val_len
+                camFile = open(dev_id+'.data', 'ab')
                 camFile.write(str(val))
         time.sleep(timeout)
         
