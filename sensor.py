@@ -13,6 +13,11 @@ def sensor_send(message, args):
 def signal_handler(signal, frame):
     print 'shutting down sensor...'
     sys.exit(0)
+def usage():
+    print "sensor.py <sensor_type> <ip> <port>\n\
+    valid sensor_type: [temp, device, gps, camera]"
+            
+
     '''
     send data 
     '''
@@ -37,6 +42,9 @@ def main(argv):
     very simple sensor generator
     '''
     start_time = time.time()
+    if argv[0] == "-h" or argv[0]=="--help":
+        usage()
+        sys.exit(0)
     
     #choose deviceid?
     dev_id=argv[0]+"-"+str(random.randint(10000,99999))
@@ -115,6 +123,7 @@ def main(argv):
                 vid_stime=time.time()+timeout
         else:
             print argv[0],"not defined"
+            usage()
             break
             
         #pack the data into a dictionary    
