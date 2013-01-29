@@ -135,7 +135,7 @@ def main(argv):
                     motion=0
             else:
                 #no motion, no data, sleep random time
-                val=0
+                val="NO_MOTION"
                 motion=random.choice([0,1])
                 timeout=float(random.uniform(1,10))
                 vid_stime=time.time()+timeout
@@ -153,6 +153,7 @@ def main(argv):
         message["ts"]=curr_time
         message["dev_id"]=(dev_id)
         message["data"]=(val)
+
         sensor_send(str(message), ip, port)
         #print timeout
         
@@ -162,9 +163,9 @@ def main(argv):
         else:
             val_len = len(str(val))
             logWriter.writerow([curr_time, val_len])
-            if (val!=0 and val_len>1):
+            if(val!="NO_MOTION"):
                 #global Camera_data_size
-                Camera_data_size += val_len
+                #Camera_data_size += val_len
                 camFile = open(dev_id+'.data', 'ab')
                 camFile.write(str(val))
         time.sleep(timeout)
