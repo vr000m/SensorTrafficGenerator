@@ -19,7 +19,7 @@ def signal_handler(signal, frame):
     sys.exit(0)
 
 def usage():
-    print "sensor.py <sensor_type> <ip> <port>\n\
+    print "sensor.py <sensor_type> <server_ip> <server_port>\n\
     valid sensor_type: [temp, device, gps, camera]"
             
 
