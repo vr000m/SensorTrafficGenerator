@@ -35,7 +35,7 @@ nosetests.xml
 .pydevproject
 
 ### Custom
-.log
-.data
+*.log
+*.data
 
 .DS_Store
