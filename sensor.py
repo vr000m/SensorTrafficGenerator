@@ -5,10 +5,14 @@ import time
 import socket
 import os
 import csv
+import signal
 
 MTU=1300
     
 def sensor_send(message, args):
+def signal_handler(signal, frame):
+    print 'shutting down sensor...'
+    sys.exit(0)
     '''
     send data 
     '''
@@ -122,4 +126,5 @@ def main(argv):
         time.sleep(timeout)
         
 if __name__ == "__main__":
-  main(sys.argv[1:])
+  main(sys.argv[1:])    signal.signal(signal.SIGINT, signal_handler)
+    main(sys.argv[1:])
