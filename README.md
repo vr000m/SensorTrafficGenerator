@@ -14,3 +14,8 @@ Example:
  python sensor.py <sensor_type> <ip> <port>
  python sensor.py camera localhost 5000
 ```
+
+It also creates a log file (CSV) with filename `device_id.log`:
+```
+ timestamp  device_id   value or len(value)
+```
