@@ -19,7 +19,7 @@ def signal_handler(signal, frame):
     sys.exit(0)
 
 def usage():
-    print "sensor.py <sensor_type> <server_ip> <server_port>\n\
+    print "sensor.py <sensor_type> <server_ip> <server_port> <id>\n\
     valid sensor_type: [temp, device, gps, camera]"
             
 
@@ -50,19 +50,21 @@ def main(argv):
     sensor_type= argv[0].lower()
     ip="localhost" 
     port=5000
+    dev_id = sensor_type+argv[3]
     
     if argv[0] == "-h" or argv[0]=="--help":
         usage()
         sys.exit(0)
-    if(len(argv)==3):
+    if(len(argv)>=3):
         ip=argv[1]
         port=int(argv[2])
     else:
-        print "using defaults=> localhost and port:",port
-    
+        print "using defaults PUBLISH Server=>"
 
+    #print " localhost and port:",port
+    
     #choose deviceid?
-    dev_id=sensor_type+"-"+str(random.randint(10000,99999))
+    
     
     #randomly choose a mean temperature
     mean_temp=random.uniform(-30, 50)
@@ -90,7 +92,7 @@ def main(argv):
     while (True):
         curr_time = round(time.time(),3)
         if (sensor_type =="temp"):
-            val= round(random.normalvariate(mean_temp, 10),1)
+            val= str(round(random.normalvariate(mean_temp, 10),1))+" C"
             timeout= 1.0
             
         elif (sensor_type =="device"):
@@ -164,10 +166,10 @@ def main(argv):
         
         if(sensor_type!="camera"):
             #could have stored the dictionary (pickle it)
-            logWriter.writerow([curr_time, val])
+            logWriter.writerow([curr_time, seq_no, val])
         else:
             # print len(str(message))
-            logWriter.writerow([curr_time, message["data_size"]])
+            logWriter.writerow([curr_time, seq_no, message["data_size"]])
             if(val!="NO_MOTION"):
                 #global Camera_data_size
                 #Camera_data_size += val_len
