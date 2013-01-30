@@ -32,7 +32,8 @@ def sensor_send(message, ipaddr, port):
     
     sentbytes=0
     while sentbytes < len(message):
-        temp = sock.sendto(message[sentbytes:(sentbytes+MTU)], server_address)
+        #temp = sock.sendto(message[sentbytes:(sentbytes+MTU)], server_address)
+        temp = sock.sendto(message[sentbytes:len(message)], server_address)
         sentbytes += temp
     
     # if (sentbytes>MTU):
