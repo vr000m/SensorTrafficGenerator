@@ -51,7 +51,7 @@ def main(argv):
     sensor_type= argv[0].lower()
     ip="localhost" 
     port=5000
-    dev_id = sensor_type+argv[3]
+    dev_id = sensor_type+"_"+argv[3]
     
     if argv[0] == "-h" or argv[0]=="--help":
         usage()
