@@ -10,7 +10,7 @@ import signal
 
 MTU=1300
 #Camera_data_size = 0
-
+sensor_dir="./sensor_log/"
     
 def signal_handler(signal, frame):
     print 'shutting down sensor...'
@@ -32,6 +32,7 @@ def sensor_send(message, ipaddr, port):
     
     sentbytes=0
     while sentbytes < len(message):
+        #we could fragment the data??
         #temp = sock.sendto(message[sentbytes:(sentbytes+MTU)], server_address)
         temp = sock.sendto(message[sentbytes:len(message)], server_address)
         sentbytes += temp
@@ -83,7 +84,12 @@ def main(argv):
             iRow +=1
     fwdDir = True
 
-    logFname = dev_id+'.log'
+    try:
+        os.makedirs(sensor_dir)
+    except OSError:
+        print "Directory " + sensor_dir + " already exists"
+
+    logFname = sensor_dir+dev_id+'.log'
     logFile = open(logFname, 'wb')
     logWriter = csv.writer(logFile, delimiter='\t')
     
@@ -106,8 +112,9 @@ def main(argv):
             t = float(dist/speed)
             val = [paths[j][0], paths[j][1]]
             
+            #we limit t to 60s
             if (t>60):
-                t=5
+                t=60
             
             if(fwdDir):
                 j +=1
@@ -173,8 +180,9 @@ def main(argv):
             if(val!="NO_MOTION"):
                 #global Camera_data_size
                 #Camera_data_size += val_len
-                camFile = open(dev_id+'.data', 'ab')
+                camFile = open(sensor_dir+dev_id+'.data', 'ab')
                 camFile.write(str(val))
+                camFile.close
         time.sleep(timeout)
         
 if __name__ == "__main__":
