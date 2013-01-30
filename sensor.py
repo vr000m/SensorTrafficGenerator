@@ -97,12 +97,12 @@ def main(argv):
             
         elif (sensor_type =="gps"):
             dist= paths[j][2]
-            units= 1#float(1000.0/3600.0)
+            units= float(1000.0/3600.0)
             speed=random.uniform(30.0*units, 100.0*units)
             t = float(dist/speed)
             val = [paths[j][0], paths[j][1]]
             
-            if (t>5):
+            if (t>60):
                 t=5
             
             if(fwdDir):
