@@ -11,11 +11,12 @@ We currently simulate the following __sensor_types__:
 
 Example:
 ```
- python sensor.py <sensor_type> <ip> <port>
- python sensor.py camera localhost 5000
+ python sensor.py <sensor_type> <ip> <port> <id>
+ python sensor.py camera localhost 5000 1
 ```
 
-It also creates a log file (CSV) with filename `device_id.log`:
+It also creates a log file (CSV) with filename `dev_id.log`.
+`dev_id` is a combination of `<sensor_type>_<id>`
 ```
  timestamp  seq_no   data_value
 ```
