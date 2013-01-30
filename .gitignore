@@ -43,3 +43,5 @@ nosetests.xml
 #iot-server.py is just an example 
 #to verify that the data from the sensor.py is correctly received
 iot-server.py
+
+*.list
