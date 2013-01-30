@@ -153,11 +153,11 @@ def main(argv):
         #pack the data into a dictionary    
         message={}
         seq_no+=1
-        message["ts"]=str(curr_time)
         message["dev_id"]=str(dev_id)
-        message["size"]=len(str(val))
-        message["data"]=str(val)
+        message["ts"]=str(curr_time)
         message["seq_no"]=str(seq_no)
+        message["data_size"]=str(len(str(val)))
+        message["sensor_data"]=str(val)
 
         sensor_send(str(message), ip, port)
         #print timeout
@@ -167,7 +167,7 @@ def main(argv):
             logWriter.writerow([curr_time, val])
         else:
             # print len(str(message))
-            logWriter.writerow([curr_time, message["size"]])
+            logWriter.writerow([curr_time, message["data_size"]])
             if(val!="NO_MOTION"):
                 #global Camera_data_size
                 #Camera_data_size += val_len
