@@ -86,6 +86,7 @@ def main(argv):
     logWriter = csv.writer(logFile, delimiter='\t')
     
     j=0
+    seq_no=0
     while (True):
         curr_time = round(time.time(),3)
         if (sensor_type =="temp"):
@@ -151,9 +152,12 @@ def main(argv):
             
         #pack the data into a dictionary    
         message={}
-        message["ts"]=curr_time
-        message["dev_id"]=(dev_id)
-        message["data"]=(val)
+        seq_no+=1
+        message["ts"]=str(curr_time)
+        message["dev_id"]=str(dev_id)
+        message["size"]=len(str(val))
+        message["data"]=str(val)
+        message["seq_no"]=str(seq_no)
 
         sensor_send(str(message), ip, port)
         #print timeout
@@ -162,8 +166,8 @@ def main(argv):
             #could have stored the dictionary (pickle it)
             logWriter.writerow([curr_time, val])
         else:
-            val_len = len(str(val))
-            logWriter.writerow([curr_time, val_len])
+            # print len(str(message))
+            logWriter.writerow([curr_time, message["size"]])
             if(val!="NO_MOTION"):
                 #global Camera_data_size
                 #Camera_data_size += val_len
