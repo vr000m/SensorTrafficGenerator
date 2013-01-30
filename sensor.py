@@ -123,8 +123,8 @@ def main(argv):
                 #yes there was motion
                 #sends lots of data, often
                 fps=15
-                #bit rate is between 100 kbps to 1 Mbps
-                bitrate= int(random.uniform(100000, 1000000))
+                #bit rate is between 50 kbps to 200 kbps
+                bitrate= int(random.uniform(50000, 200000))
                 #generating random bytes to simulate MPEG2 video payload
                 #in MPEG2 all frames are equal sized
                 val= os.urandom(bitrate/8/fps)
