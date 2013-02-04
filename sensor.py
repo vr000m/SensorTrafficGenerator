@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sys
 import random
@@ -47,21 +48,16 @@ def main(argv):
     '''
     very simple sensor generator
     '''
-    start_time = time.time()
-    sensor_type= argv[0].lower()
-    ip="localhost" 
-    port=5000
-    dev_id = sensor_type+"_"+argv[3]
-    
-    if argv[0] == "-h" or argv[0]=="--help":
+    if len(argv) < 4 or argv[0] == "-h" or argv[0]=="--help":
         usage()
         sys.exit(0)
-    if(len(argv)>=3):
-        ip=argv[1]
-        port=int(argv[2])
-    else:
-        print "using defaults PUBLISH Server=>"
 
+    start_time = time.time()
+    sensor_type= argv[0].lower()
+    ip=argv[1]
+    port=int(argv[2])
+    dev_id = sensor_type+"_"+argv[3]
+    
     #print " localhost and port:",port
     
     #choose deviceid?
