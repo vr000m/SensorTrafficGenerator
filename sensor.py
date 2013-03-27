@@ -158,6 +158,9 @@ def main(argv):
         #pack the data into a dictionary    
         message={}
         seq_no+=1
+        #adding seq_no wrap-around
+        if (seq_no > 32000):
+            seq_no = 0
         message["dev_id"]=str(dev_id)
         message["ts"]=str(curr_time)
         message["seq_no"]=str(seq_no)
