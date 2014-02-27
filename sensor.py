@@ -8,6 +8,7 @@ import os
 import csv
 import glob
 import signal
+import wave, struct
 
 MTU=1300
 #Camera_data_size = 0
@@ -80,6 +81,35 @@ def main(argv):
             iRow +=1
     fwdDir = True
 
+    # ambient sound sensor
+    # 48 kHz
+    # 16 bit
+    # Stereo
+    waveData = []
+    # number of samples per second
+    splPerSec = 100 #1/splPerSec = packetization ts
+    # initializing variables
+    splPerTs = 1
+    asdWrapLimit = 1
+    
+    if (sensor_type =="asd"):
+        waveFile = wave.open('ct1.wav', 'rb')
+        params = waveFile.getparams()
+        # params:  (2, 2, 48000, 2880000, 'NONE', 'not compressed')
+        rate = float(params[2])
+        frames = waveFile.getnframes()
+        # number of frames aggregated in each timestamp
+        splPerTs = rate/splPerSec
+        asdWrapLimit = int(params[3]/splPerTs)
+        for i in range(0,asdWrapLimit):
+            # infact they are two frames for each instance
+            # data = str(struct.unpack("<hh", waveFile.readframes(1)))
+            data = waveFile.readframes(int(splPerTs))
+            waveData.append(data)
+            # print "data: ",len(data)
+            # data is a tuple of left and right channels
+            # values for the channel are supposed to be 2s complementary 
+            
     try:
         os.makedirs(sensor_dir)
     except OSError:
@@ -92,7 +122,7 @@ def main(argv):
     j=0
     seq_no=0
     while (True):
-        curr_time = round(time.time(),3)
+        curr_time = round(time.time(),5)
         if (sensor_type =="temp"):
             val= str(round(random.normalvariate(mean_temp, 10),1))+" C"
             timeout= 1.0
@@ -147,6 +177,12 @@ def main(argv):
                 timeout=float(random.uniform(1,10))
                 vid_stime=time.time()+timeout
 
+        elif (sensor_type == "asd"): 
+            val = waveData[j%asdWrapLimit]
+            j +=1
+            # print "val: ",curr_time, (val)
+            timeout=float(1.0/splPerSec)
+            
         else:
             print "argument:",argv[0],"not defined"
             files=glob.glob(logFname)
